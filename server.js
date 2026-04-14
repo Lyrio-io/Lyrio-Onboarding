@@ -1,14 +1,22 @@
-const express = require('express');
+const http = require('http');
+const fs = require('fs');
 const path = require('path');
-const app = express();
+ 
 const PORT = process.env.PORT || 3000;
-
-app.use(express.static(path.join(__dirname)));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+ 
+const server = http.createServer((req, res) => {
+  const filePath = path.join(__dirname, 'index.html');
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      res.end('Not found');
+      return;
+    }
+    res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
+    res.end(data);
+  });
 });
-
-app.listen(PORT, () => {
+ 
+server.listen(PORT, () => {
   console.log(`Lyrio Onboarding running on port ${PORT}`);
 });
